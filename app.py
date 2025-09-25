@@ -7,7 +7,6 @@ import os
 load_dotenv()
 
 app = Flask(__name__)
-CORS(app)
 CORS(app, resources={r"/*": {"origins": "https://sunandagroups.com"}})
 
 # Mail configuration
@@ -20,13 +19,17 @@ app.config['MAIL_DEFAULT_SENDER'] = os.getenv('EMAIL_USER')
 
 mail = Mail(app)
 
+@app.route("/")
+def home():
+    return "Flask backend is live 🚀"
+
 @app.route('/send_email', methods=['POST'])
 def send_email():
     try:
         data = request.get_json()
         msg = Message(
             subject=f"New contact from {data['name']}",
-            recipients=["parthvermavns2002@gmail.com","info@sunandagroups.com"],
+            recipients=["parthvermavns2002@gmail.com", "info@sunandagroups.com"],
             body=f"""
             Name: {data['name']}
             Email: {data['email']}
@@ -40,5 +43,5 @@ def send_email():
         return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000)
     
